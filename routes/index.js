@@ -1,41 +1,33 @@
-import { createBrowserRouter } from "react-router-dom";
-import App from "../App";
-import RegisterPage from "../pages/RegisterPage";
-import CheckEmailPage from "../pages/CheckEmailPage";
-import CheckPasswordPage from "../pages/CheckPasswordPage";
-import Home from "../pages/Home";
-import MessagePage from "../components/MessagePage";
-import AuthLayouts from "../layout";
+const express = require('express')
+const registerUser = require('../controller/registerUser')
+const checkEmail = require('../controller/checkEmail')
+const checkPassword = require('../controller/checkPassword')
+const userDetails = require('../controller/userDetails')
+const logout = require('../controller/logout')
+const updateUserDetails = require('../controller/updateUserDetails')
+const SearchUser = require('../controller/searchUser')
 
-const router = createBrowserRouter([
-{
-    path : "/",
-    element : <App/>,
-    children : [
-        {
-            path : "register",
-            element : <AuthLayouts><RegisterPage/></AuthLayouts>
-        },
-        {
-            path : 'email',
-            element : <AuthLayouts><CheckEmailPage/></AuthLayouts>
-        },
-        {
-            path : 'password',
-            element : <AuthLayouts><CheckPasswordPage/></AuthLayouts>
-        },
-        {
-            path : "",
-            element : <Home/>,
-            children : [
-                {
-                    path : ':userId',
-                    element : <MessagePage/>
-                }
-            ]
-        }
-    ]
-}
-])
+const router = express.Router()
 
-export default router
+//create user api
+router.post('/register',registerUser)
+
+//check user email
+router.post('/email',checkEmail)
+
+//check user password
+router.post('/password',checkPassword)
+
+//lodin user details
+router.get('/user-details',userDetails)
+
+//logout user
+router.get('/logout',logout)
+
+//update user details
+router.post('/update-user',updateUserDetails)
+
+//Search user
+router.post("/search-user",SearchUser)
+
+module.exports = router

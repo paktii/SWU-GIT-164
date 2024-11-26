@@ -1,25 +1,32 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import { RouterProvider } from 'react-router-dom';
-import router from './routes';
-import {Provider} from 'react-redux'
-import { store } from './redux/store'
+const express = require('express')
+const cors = require('cors')
+require('dotenv').config()
+const connectDB = require('./config/connectDB')
+const router = require('./routes/index')
+const cookiesParser = require('cookie-parser')
+const { app ,server} = require('./socket/index')
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <RouterProvider router={router}>
-        <App />
-      </RouterProvider>
-    </Provider>
-  </React.StrictMode>
-);
+//const app = express()
+app.use(cors({
+    origin : process.env.FRONTEND_URL,
+    credentials : true
+}))
+app.use(express.json())
+app.use(cookiesParser())
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+const PORT = process.env.PORT || 8080
+
+app.get('/',(request,response)=>{
+    response.json({
+        message : "server running at " + PORT
+    })
+})
+
+//api endpoints
+app.use('/api',router)
+
+connectDB().then(()=>{
+    server.listen(PORT,()=>{
+        console.log("server running at " + PORT)
+    })
+})
